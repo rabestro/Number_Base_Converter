@@ -8,13 +8,23 @@ public class Main {
     public static void main(String[] args) {
         final var scanner = new Scanner(System.in);
 
-        System.out.println("Enter number in decimal system:");
-        final var number = new BigInteger(scanner.nextLine());
-
-        System.out.println("Enter target base:");
-        final var radix = scanner.nextInt();
-
-        System.out.println("Conversion result:");
-        System.out.println(number.toString(radix));
+        while (true) {
+            System.out.println("Do you want to convert /from decimal or /to decimal? (To quit type /exit)");
+            final var command = scanner.next().toLowerCase();
+            var isFrom = true;
+            switch (command) {
+                case "/exit":
+                    return;
+                case "/to":
+                    isFrom = false;
+                case "/from":
+                    System.out.println(isFrom ? "Enter a number in decimal system:" : "Enter source number:");
+                    final var number = scanner.next();
+                    System.out.println(isFrom ? "Enter the target base:" : "Enter the source base:");
+                    final var radix = scanner.nextInt();
+                    System.out.print(isFrom ? "Conversion result: " : "Conversion to decimal result: ");
+                    System.out.println(isFrom ? new BigInteger(number).toString(radix) : new BigInteger(number, radix));
+            }
+        }
     }
 }
