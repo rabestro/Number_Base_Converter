@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+    private static final String DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     public static void main(String[] args) {
         final var scanner = new Scanner(System.in);
@@ -22,8 +23,34 @@ public class Main {
                 if ("/back".equalsIgnoreCase(number)) {
                     break;
                 }
-                System.out.println("Conversion result: " + new BigInteger(number, base[0]).toString(base[1]));
+                System.out.println("Conversion result: " + fromToRadix(number, base[0], base[1]));
             }
         }
+    }
+
+    public static String fromToRadix(String number, int sourceBase, int targetBase) {
+        final var dotIndex = number.indexOf('.');
+        if (dotIndex == -1) {
+            return new BigInteger(number, sourceBase).toString(targetBase);
+        }
+        final var sourceWhole = number.substring(0, dotIndex);
+        final var sourceFraction = number.substring(1 + dotIndex);
+        final var targetWhole = new BigInteger(sourceWhole, sourceBase).toString(targetBase);
+        var decimalFraction = 0.0;
+        var divider = (double) sourceBase;
+
+        for (final var digit : sourceFraction.toCharArray()) {
+            decimalFraction += DIGITS.indexOf(digit) / divider;
+            divider *= sourceBase;
+        }
+        final var targetFraction = new StringBuilder();
+        for (int i = 5; i > 0; --i) {
+            decimalFraction *= targetBase;
+            final var index = (int) decimalFraction;
+            targetFraction.append(DIGITS.charAt(index));
+            decimalFraction -= index;
+        }
+
+        return targetWhole + "." + targetFraction;
     }
 }
