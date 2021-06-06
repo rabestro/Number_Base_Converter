@@ -1,6 +1,7 @@
 package converter;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -9,20 +10,19 @@ public class Main {
         final var scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("Do you want to convert /from decimal or /to decimal? (To quit type /exit)");
-            var isFrom = true;
-            switch (scanner.next().toLowerCase()) {
-                case "/exit":
-                    return;
-                case "/to":
-                    isFrom = false;
-                case "/from":
-                    System.out.printf("Enter %s: ", isFrom ? "a number in decimal system" : "source number");
-                    final var number = scanner.next();
-                    System.out.printf("Enter the %s base: ", isFrom ? "target" : "source");
-                    final var radix = scanner.nextInt();
-                    System.out.printf("Conversion%s result: ", isFrom ? "" : " to decimal");
-                    System.out.println(isFrom ? new BigInteger(number).toString(radix) : new BigInteger(number, radix));
+            System.out.print("Enter two numbers in format: {source base} {target base} (To quit type /exit) ");
+            final var params = scanner.nextLine().split(" ");
+            if ("/exit".equalsIgnoreCase(params[0])) {
+                return;
+            }
+            final var base = Arrays.stream(params).mapToInt(Integer::parseInt).toArray();
+            while (true) {
+                System.out.printf("Enter number in base %d to convert to base %d (To go back type /back) ", base[0], base[1]);
+                final var number = scanner.nextLine();
+                if ("/back".equalsIgnoreCase(number)) {
+                    break;
+                }
+                System.out.println("Conversion result: " + new BigInteger(number, base[0]).toString(base[1]));
             }
         }
     }
